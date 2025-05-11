@@ -14,59 +14,59 @@ let rightAnswers = 0;
 let countdownInterval;
 
 function getQuestion() {
-
   let myRequest = new XMLHttpRequest();
 
   myRequest.onreadystatechange = function () {
-
     if (this.readyState === 4 && this.status === 200) {
       let questionObject = JSON.parse(this.responseText);
       let questionCount = questionObject.length;
 
-      // Create Bullets  + Set Question Count
-      creatBullets(questionCount);
+      // Create Bullets + Set Question Count
+      createBullets(questionCount);
 
       // Add Question Data
       addQuestionData(questionObject[currentIndex], questionCount);
 
-      // Count Down 
+      // Countdown
       countDown(100, questionCount);
 
       // Click on submit button
       submitButton.onclick = () => {
-
         // Get Right answer 
         let rightAnswer = questionObject[currentIndex].right_answer;
-        
-        // increase index
+
+        // Increase index
         currentIndex++;
 
-        // check the answer 
+        // Check the answer 
         checkAnswer(rightAnswer, questionCount);
 
         // Remove Old Questions 
-        quizArea.innerHTML= '';
-        answersArea.innerHTML = '';
+        if (quizArea) quizArea.innerHTML = '';
+        if (answersArea) answersArea.innerHTML = '';
 
-        // Add Question Data
-        addQuestionData(questionObject[currentIndex], questionCount);
+        // Add New Question Data (Only if within the range)
+        if (currentIndex < questionCount) {
+          addQuestionData(questionObject[currentIndex], questionCount);
 
-        // Hundle Bullets
-        hundleBullets();
+          // Handle Bullets
+          handleBullets();
 
-        // Count Down 
-        clearInterval(countdownInterval);
-        countDown(100, questionCount);
-
-        // Show Results 
-        showResults(questionCount);
-      }
+          // Countdown 
+          clearInterval(countdownInterval);
+          countDown(100, questionCount);
+        } else {
+          // Show Results when questions end
+          showResults(questionCount);
+        }
+      };
     }
-  }
+  };
+  
   myRequest.open("GET", "../html_questions.json", true);
   myRequest.send();
+}
 
-};
 
 getQuestion();
 
