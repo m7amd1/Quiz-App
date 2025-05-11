@@ -14,59 +14,42 @@ let rightAnswers = 0;
 let countdownInterval;
 
 function getQuestion() {
-  let myRequest = new XMLHttpRequest();
-
-  myRequest.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status === 200) {
-      let questionObject = JSON.parse(this.responseText);
+  fetch("../html_questions.json")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((questionObject) => {
       let questionCount = questionObject.length;
-
-      // Create Bullets + Set Question Count
       createBullets(questionCount);
-
-      // Add Question Data
       addQuestionData(questionObject[currentIndex], questionCount);
-
-      // Countdown
       countDown(100, questionCount);
 
       // Click on submit button
       submitButton.onclick = () => {
-        // Get Right answer 
         let rightAnswer = questionObject[currentIndex].right_answer;
-
-        // Increase index
         currentIndex++;
-
-        // Check the answer 
         checkAnswer(rightAnswer, questionCount);
+        quizArea.innerHTML = '';
+        answersArea.innerHTML = '';
 
-        // Remove Old Questions 
-        if (quizArea) quizArea.innerHTML = '';
-        if (answersArea) answersArea.innerHTML = '';
-
-        // Add New Question Data (Only if within the range)
         if (currentIndex < questionCount) {
           addQuestionData(questionObject[currentIndex], questionCount);
-
-          // Handle Bullets
           handleBullets();
-
-          // Countdown 
           clearInterval(countdownInterval);
           countDown(100, questionCount);
         } else {
-          // Show Results when questions end
           showResults(questionCount);
         }
       };
-    }
-  };
-  
-  myRequest.open("GET", "../html_questions.json", true);
-  myRequest.send();
+    })
+    .catch((error) => {
+      console.error("Error loading questions:", error);
+      resultsContainer.innerHTML = `<span class='bad'>Error loading questions. Please try again later.</span>`;
+    });
 }
-
 
 getQuestion();
 
