@@ -14,7 +14,7 @@ let rightAnswers = 0;
 let countdownInterval;
 
 function getQuestion() {
-  fetch("../questions.json")
+  fetch("https://m7amd1.github.io/Quiz-App/html_questions.json")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
