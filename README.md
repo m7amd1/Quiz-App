@@ -1,0 +1,1 @@
+## A Quiz App built with JavaScript that presents a series of fixed questions with multiple-choice answers. Users can select their answers and receive immediate feedback on their score at the end. It’s a simple and interactive way to test knowledge on a specific topic.
