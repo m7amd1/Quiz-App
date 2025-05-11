@@ -14,7 +14,7 @@ let rightAnswers = 0;
 let countdownInterval;
 
 function getQuestion() {
-  fetch("https://m7amd1.github.io/Quiz-App/html_questions.json")
+  fetch("../questions.json")
     .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -27,13 +27,12 @@ function getQuestion() {
       addQuestionData(questionObject[currentIndex], questionCount);
       countDown(100, questionCount);
 
-      // Click on submit button
       submitButton.onclick = () => {
         let rightAnswer = questionObject[currentIndex].right_answer;
         currentIndex++;
         checkAnswer(rightAnswer, questionCount);
-        quizArea.innerHTML = '';
-        answersArea.innerHTML = '';
+        quizArea.innerHTML = "";
+        answersArea.innerHTML = "";
 
         if (currentIndex < questionCount) {
           addQuestionData(questionObject[currentIndex], questionCount);
@@ -53,124 +52,88 @@ function getQuestion() {
 
 getQuestion();
 
-function creatBullets(num) {
-
+function createBullets(num) {
   countSpan.innerHTML = num;
 
-  // Create Spans 
+  for (let i = 0; i < num; i++) {
+    let theBullet = document.createElement("span");
 
-  for (let i = 0; i < num; i++){
-
-    // Create Bullets
-    let theBullet = document.createElement('span');
-
-    // Add Class active in First Span 
-    if (i === 0) {      
-      theBullet.className = 'on';
+    if (i === 0) {
+      theBullet.className = "on";
     }
 
-    // Append span in bullets Span Container
     bulletsSpanContainer.appendChild(theBullet);
-
   }
-
-};
+}
 
 function addQuestionData(obj, count) {
-
   if (currentIndex < count) {
-    // Create The Question 
-    let questionTitle = document.createElement('h2');
+    let questionTitle = document.createElement("h2");
 
-    // Create The Text of The Question 
     let questionText = document.createTextNode(obj.title);
 
-    // Append text in question 
     questionTitle.appendChild(questionText);
 
-    // Append Question in Quiz Area
     quizArea.appendChild(questionTitle);
 
-    // Create The Answers
     for (let i = 1; i <= 4; i++) {
+      let mainDiv = document.createElement("div");
 
-    let mainDiv = document.createElement('div');
+      mainDiv.className = "answer";
 
-    // Add Class To Main Div 
+      let radioInput = document.createElement("input");
 
-    mainDiv.className = 'answer';
+      radioInput.name = "question";
+      radioInput.type = "radio";
+      radioInput.id = `answer_${i}`;
+      radioInput.dataset.answer = obj[`answer_${i}`];
 
-    // Create Radio input
-    let radioInput  = document.createElement('input');
+      if (i === 1) {
+        radioInput.checked = true;
+      }
 
-    // Add Type + Name + data attribute + id
-    radioInput.name = 'question';
-    radioInput.type = 'radio';
-    radioInput.id = `answer_${i}`;
-    radioInput.dataset.answer = obj[`answer_${i}`];
+      let label = document.createElement("label");
 
-    // make first answer checked
-    if (i === 1) {
-    radioInput.checked = true;
+      label.htmlFor = `answer_${i}`;
+
+      let labelText = document.createTextNode(obj[`answer_${i}`]);
+
+      label.appendChild(labelText);
+
+      mainDiv.appendChild(radioInput);
+      mainDiv.appendChild(label);
+
+      answersArea.appendChild(mainDiv);
     }
-
-    // Create Label 
-    let label  = document.createElement('label');
-
-    // Add For Attribute 
-    label.htmlFor = `answer_${i}`;
-
-    // Create Text Label
-    let labelText = document.createTextNode(obj[`answer_${i}`]);
-
-    // Append Answer on label 
-    label.appendChild(labelText);
-
-    // Append label + input to main div
-    mainDiv.appendChild(radioInput);
-    mainDiv.appendChild(label);
-
-    // Add Main Div to answers Area
-    answersArea.appendChild(mainDiv);
-    }
-
   }
-
-};
-
+}
 
 function checkAnswer(rAnswer, count) {
-
-  let answers = document.getElementsByName('question');
-  let theChoosenAnswer;
+  let answers = document.getElementsByName("question");
+  let theChosenAnswer;
 
   for (let i = 0; i < answers.length; i++) {
     if (answers[i].checked) {
-      theChoosenAnswer = answers[i].dataset.answer;
+      theChosenAnswer = answers[i].dataset.answer;
     }
   }
 
-  if (rAnswer === theChoosenAnswer) {
+  if (rAnswer === theChosenAnswer) {
     rightAnswers++;
-    console.log('You Chooses The Right Answer');
+    console.log("You Chooses The Right Answer");
   }
+}
 
-};
-
-function hundleBullets() {
-
-  let bulletsSpan = document.querySelectorAll('.bullets .spans span');
+function handleBullets() {
+  let bulletsSpan = document.querySelectorAll(".bullets .spans span");
   let arrayOfSpans = Array.from(bulletsSpan);
-  
+
   arrayOfSpans.forEach((span, index) => {
-
     if (currentIndex === index) {
-      span.className = 'on';
+      span.className = "on";
     }
-
   });
-  
-};
+}
 
 function showResults(count) {
   let theResult;
@@ -179,7 +142,7 @@ function showResults(count) {
     answersArea.remove();
     submitButton.remove();
     bullets.remove();
-    
+
     if (rightAnswers > count / 2 && rightAnswers < count) {
       theResult = `<span class='good'>Good</span>, ${rightAnswers} From ${count} is Good.`;
     } else if (rightAnswers === count) {
@@ -188,15 +151,13 @@ function showResults(count) {
       theResult = `<span class='bad'>Bad</span>, ${rightAnswers} From ${count}`;
     }
     resultsContainer.innerHTML = theResult;
-    resultsContainer.style.padding = '10px';
-    resultsContainer.style.backgroundColor = '#FFF';
-    resultsContainer.style.marginTop = '10px';
+    resultsContainer.style.padding = "10px";
+    resultsContainer.style.backgroundColor = "#FFF";
+    resultsContainer.style.marginTop = "10px";
   }
-
-};
+}
 
 function countDown(duration, count) {
-
   if (currentIndex < count) {
     let minutes, seconds;
     countdownInterval = setInterval(function () {
@@ -214,4 +175,4 @@ function countDown(duration, count) {
       }
     }, 1000);
   }
-};
+}
